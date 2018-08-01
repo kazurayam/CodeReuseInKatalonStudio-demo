@@ -1,4 +1,4 @@
-package codesharing
+package katalon.codesharing
 
 import com.kms.katalon.core.configuration.RunConfiguration
 import com.kms.katalon.core.network.ProxyInformation
@@ -9,6 +9,8 @@ import org.apache.http.Header
 import org.apache.http.HeaderElement
 import org.apache.http.HttpHost
 import org.apache.http.HttpResponse
+import org.apache.http.auth.Credentials
+import org.apache.http.auth.UsernamePasswordCredentials
 import org.apache.http.client.ClientProtocolException
 import org.apache.http.client.ResponseHandler
 import org.apache.http.client.config.RequestConfig
@@ -17,9 +19,16 @@ import org.apache.http.client.methods.HttpHead
 import org.apache.http.impl.client.CloseableHttpClient
 import org.apache.http.impl.client.HttpClients
 import org.apache.http.impl.client.LaxRedirectStrategy
+import org.junit.After
+import org.apache.http.impl.client.BasicCredentialsProvider
+import org.apache.http.client.CredentialsProvider
+import org.apache.http.auth.AuthScope
 
 import java.util.regex.Matcher
 import java.util.regex.Pattern
+import org.slf4j.Logger
+import org.slf4j.LoggerFactory
+
 
 /**
  * Downloader drives HTTP request & response to download a distribute file from a web site.
@@ -30,6 +39,8 @@ import java.util.regex.Pattern
  * https://gist.github.com/rponte/09ddc1aa7b9918b52029
  */
 public class Downloader {
+
+	private static final Logger logger_ = LoggerFactory.getLogger(Downloader.class)
 
 	static final String version = '0.1'
 
@@ -48,16 +59,32 @@ public class Downloader {
 		}
 	}
 
+	/**
+	 * 
+	 * @param url
+	 * @param credentials
+	 * @return
+	 */
+	private static CloseableHttpClient makeHttpClient(URL url, Credentials credentials) {
+		if (url == null) {
+			throw new IllegalArgumentException("url is required")
+		}
+		CredentialsProvider provider = new BasicCredentialsProvider()
+		provider.setCredentials(AuthScope.ANY, credentials);
+		CloseableHttpClient httpclient = HttpClients.custom()
+				.setRedirectStrategy(new LaxRedirectStrategy())
+				.setDefaultCredentialsProvider(provider)
+				.build()
+		return httpclient
+	}
 
 	/**
 	 * 
 	 * @param url
 	 * @return
 	 */
-	public Header[] getAllHeaders(URL url) {
-		CloseableHttpClient httpclient = HttpClients.custom()
-				.setRedirectStrategy(new LaxRedirectStrategy())
-				.build()
+	public Header[] getAllHeaders(URL url, Credentials credentials) {
+		CloseableHttpClient httpclient = makeHttpClient(url, credentials)
 		try {
 			HttpHead head = new HttpHead(url.toURI())
 			if (this.requestConfig != null) {
@@ -74,20 +101,24 @@ public class Downloader {
 		}
 	}
 
+
 	/**
 	 * 
 	 * @param url
 	 * @param name
 	 * @return
 	 */
-	public Header getHeader(URL url, String name) {
-		Header[] headers = this.getAllHeaders(url)
+	public Header getHeader(Header[] headers, String headerName) {
 		for (Header header : headers) {
-			if (header.getName() == name) {
+			if (header.getName() == headerName) {
 				return header
 			}
 		}
 		return null
+	}
+
+	public String getHttpStatus(Header[] headers) {
+		return this.getHeader(headers, 'Status')
 	}
 
 	/**
@@ -101,8 +132,10 @@ public class Downloader {
 	 */
 	static Pattern ptn = Pattern.compile(/filename=([\S]+)$/)
 
-	public String getContentDispositionFilename(URL url) {
-		Header header = this.getHeader(url, 'Content-Disposition')
+
+	public String getContentDispositionFilename(Header[] headers) {
+		def headerName = 'Content-Disposition'
+		Header header = this.getHeader(headers, headerName)
 		if (header != null) {
 			HeaderElement[] elements = header.getElements()
 			for (HeaderElement he : elements) {
@@ -111,9 +144,9 @@ public class Downloader {
 					return m.group(1)
 				}
 			}
-			println "header is ${header}, where filename=xxxx is not found"
+			logger_.info("in ${header}, where filename=xxxx is not found")
 		} else {
-			println "${name} Header is not found in the response of ${url}"
+			logger_.info("in ${headers}, ${headerName} Header is not found")
 		}
 		return null
 	}
@@ -124,10 +157,8 @@ public class Downloader {
 	 * @param dstFile
 	 * @return
 	 */
-	public File download(URL url, File distributedFile) {
-		CloseableHttpClient httpclient = HttpClients.custom()
-				.setRedirectStrategy(new LaxRedirectStrategy())
-				.build()
+	public File download(URL url, Credentials credentials, File distributedFile) {
+		CloseableHttpClient httpclient = makeHttpClient(url, credentials)
 		try {
 			HttpGet get = new HttpGet(url.toURI())
 			if (this.requestConfig != null) {
@@ -166,7 +197,7 @@ public class Downloader {
 			HttpHost host = new HttpHost(
 					proxyServerAddress, proxyServerPort,
 					proxyServerType)
-			println "host is '${host.toString()}'"
+			logger_.debug("proxy host is '${host.toString()}'")
 			return host
 		}
 		return null
