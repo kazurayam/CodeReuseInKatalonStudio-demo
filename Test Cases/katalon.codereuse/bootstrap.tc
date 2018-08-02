@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <TestCaseEntity>
    <description></description>
-   <name>bootstrapCodeSharing</name>
+   <name>bootstrap</name>
    <tag></tag>
    <comment></comment>
    <testCaseGuid>195ab0cf-7c4d-4f29-88ef-369dbeff7b60</testCaseGuid>

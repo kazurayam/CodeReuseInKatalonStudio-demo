@@ -1,4 +1,4 @@
-package katalon.codesharing
+package katalon.codereuse
 
 import static java.nio.file.FileVisitResult.CONTINUE
 import java.nio.file.attribute.BasicFileAttributes
@@ -27,20 +27,17 @@ import groovy.util.AntBuilder
 import org.slf4j.Logger
 import org.slf4j.LoggerFactory
 
-
 /**
  * 
  * @author kazurayam
  *
  */
-public class KeywordPortability {
+public class KeywordTransferer {
 
-	private static final Logger logger_ = LoggerFactory.getLogger(KeywordPortability.class)
-
-	static final String version = '0.1'
+	private static final Logger logger_ = LoggerFactory.getLogger(KeywordTransferer.class)
 
 	static String getVersion() {
-		return version
+		return Version.getVersion()
 	}
 
 	@Keyword
