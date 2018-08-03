@@ -21,4 +21,4 @@ This CodeReuseInKatalonStudio-demo project shows how you can download the tools 
    2. unzip the downloaded file
    3. extract Groovy sources of package `Keywords/katalon/codereuse`
    4. copy the Keywords into your local `Keywords` folder
-   ![]()
+   ![Reusing Custom Keywords across projects](https://github.com/kazurayam/CodeReuseInKatalonStudio-demo/blob/master/docs/Reusing%20Custom%20Keywords%20across%20projects.png)
