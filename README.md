@@ -3,22 +3,22 @@ Sharing Groovy source codes as Keywords --- a demo
 
 This is a [Katalon Studio](https://www.katalon.com/) project for demonstration purpose. You can clone this out onto your PC and run with your Katalon Studio. This demo project was developed using version 5.4.2.
 
-## Problem to solve
+My other GitHub project [CodeReuseInKatalonStudio](https://github.com/kazurayam/CodeReuseInKatalonStudio) provides a set of custom Keywords
+`katalon.codereuse.KeywordTransferer#includeCustomKeywords()`. With this keyword, you can download a zip file of a GitHub-hosted Katalon project, and extract Groovy source files as Keywords, copy them into your current local Katalon project.
 
-In the [Katalon Forum](https://forum.katalon.com/discussions) found a few posts asking how to share codes developed in a Katalon Studio project with others.
+This CodeReuseInKatalonStudio-demo project shows how you can download the tools (KeywordTransferer and others) into your current local katalon project.
 
-1. [Drunda Nibel wants automated code sharing](https://forum.katalon.com/discussion/comment/19738)
-2. [how to create jar libraries from custom keywords](https://forum.katalon.com/discussion/8518/how-to-create-jar-libraries-from-custom-keywords?new=1)
-3. [Sharing test cases or keywords to multiple projects] (https://forum.katalon.com/discussion/5343/sharing-test-cases-or-keywords-to-multiple-projects)
-3. [Sharing methods between tests](https://forum.katalon.com/discussion/2159/sharing-methods-between-tests)
-4. [Is it possible to share test case between different projects?](https://forum.katalon.com/discussion/2104/is-it-possible-to-share-test-case-between-different-projects)
-5. [sharing of test cases](https://forum.katalon.com/discussion/7432/sharing-of-test-cases)
-6. [Is there any way to share test listeners and custom keywords code to multiple projects?](https://forum.katalon.com/discussion/6063/is-there-any-way-to-share-test-listeners-and-custom-keywords-code-to-multiple-projects)
+# How to get the tools
 
-
-## My view
-
-- Custom Keywords
-- Test Cases
-- Test Listeners
-- Test Objects
+1. Start Katalon Studio
+2. Open a new WebUI projects
+3. In the `Test Cases/` create a folder `katalon.codereuse`
+4. In the `Test Cases/katalon.coderesuse` create a Test Case named `bootstrap`
+5. Please find [Test Cases/katalon.codereuse/bootstrap](https://github.com/kazurayam/CodeReuseInKatalonStudio-demo/blob/master/Scripts/katalon.codereuse/bootstrap/Script1533170601753.groovy). Please copy this code (about 70 lines) and paste it into your new `Test cases/katalon.coderesuse/bootstrap`. Save it.
+6. Run the bootstrap script.
+7. The bootstrap script will do the following:
+   1. download a ZIP file from My [CodeReuseInKatalonStudio](https://github.com/kazurayam/CodeReuseInKatalonStudio) repository
+   2. unzip the downloaded file
+   3. extract Groovy sources of package `Keywords/katalon/codereuse`
+   4. copy the Keywords into your local `Keywords` folder
+   ![]()
